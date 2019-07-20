@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-cn" lang="zh-cn">
+  <head>
+    <title>MJPG-streamer</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="style.css" type="text/css" />
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="bookmark" href="favicon.ico" type="image/x-icon"　/>
+    <!--[if IE 6]>
+    <link rel="stylesheet" href="fix.css" type="text/css" />
+    <![endif]-->
+  </head>
+
+  <script type="text/javascript">
+    var href = window.location.href;
+    var root = href.substr(0, href.lastIndexOf('/'));
+
+    function playlist(link, hint) {
+      var res = true;
+
+      if (hint)
+        res = confirm("请直接使用VLC播放器直接打开如下视频列表");
+
+      if ( !res ) {
+        link.href = "#";
+        return false;
+      }
+
+      var m3u = "data:playlist/mjpgstreamer,#EXTM3U%0A%0A#EXTINF:-1,Webcam%20MJPG-Stream%0A" + root + "/?action=stream";
+      link.href = m3u;
+      return true;
+    }
+    
+    function run() {
+      document.getElementById("stream").firstChild.nodeValue = root + "/?action=stream";
+    }
+  </script>
+
+  <body onload="run();">
+    <div id="sidebar">
+      <h1>UVC摄像头在线监控</h1>
+      <h2>基于MJPG-Streamer的视频串流</h2>
+
+      <div id="menu">
+        <a href="index.html">主页</a>
+        <a href="static.html">静态图片</a>
+        <a href="stream.html">视频串流</a>
+        <a href="java.html">Java示例</a>
+        <a href="javascript.html">Javascript</a>
+        <a class="active" href="videolan.html">外部串流</a>
+        <a target="_blank" onClick="window.open(this.href, '_blank'); return false;" href="control.htm">视频控制</a>
+      </div>
+
+      <h3>版本信息：</h3>
+      <p>v1.1 (2019年05月29日)</p>
+    </div>
+
+    <div id="content">
+      <h1>VideoLAN</h1>
+      <h2>在VideoLAN播放器中播放视频串流</h2>
+
+      <h3>Javascript生成的M3U播放列表</h3>
+      <p>点击该链接然后一个<a onclick="return playlist(this, true);" href="#">M3U播放列表</a>将会在Javascript中生成。然而，该页面需要Javascript的支持而且它刚通过火狐浏览器的测试。它应该可以在Opera和谷歌浏览器上使用，还有微软的IE浏览器。</p>
+      
+      <h3>手动进入该串流</h3>
+      <p>你可以打开VLC播放器然后输入下面的网络串流：<br /><pre id="stream">http://&lt;IP&gt;:&lt;port&gt;/?action=stream</pre></p>
+
+      <p>&nbsp;</p>
+
+      <p>&copy; 关于 <a href="https://sourceforge.net/projects/mjpg-streamer/" target="_blank">MJPG-streamer项目</a> | Driven by <a href="https://www.mspace.tech" target="_blank">Walker Meng</a></p>
+    </div>
+  </body>
+</html>

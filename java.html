@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-cn" lang="zh-cn">
+  <head>
+    <title>MJPG-streamer</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="style.css" type="text/css" />
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="bookmark" href="favicon.ico" type="image/x-icon"　/>
+    <!--[if IE 6]>
+    <link rel="stylesheet" href="fix.css" type="text/css" />
+    <![endif]-->
+  </head>
+<style>
+    .iframe_page #framePage{
+        background-color: #adb9cd;
+        float: right;
+    }
+</style>
+  <body>
+    <div id="sidebar">
+      <h1>UVC摄像头在线监控</h1>
+      <h2>基于MJPG-Streamer的视频串流</h2>
+
+      <div id="menu">
+        <a href="index.html">主页</a>
+        <a href="static.html">静态图片</a>
+        <a href="stream.html">视频串流</a>
+        <a class="active" href="java.html">Java示例</a>
+        <a href="javascript.html">Javascript</a>
+        <a href="videolan.html">外部串流</a>
+        <a target="_blank" onClick="window.open(this.href, '_blank'); return false;" href="control.htm">视频控制</a>
+      </div>
+
+      <h3>版本信息：</h3>
+      <p>v1.1 (2019年05月29日)</p>
+    </div>
+
+    <div id="content">
+      <h1>Java</h1>
+      <h2>使用Java显示视频串流</h2>
+
+      <h3>小提示</h3>
+      <p>该页面显示了使用一个Java小程序处理的视频串流。它应该可以在任何支持Java的浏览器上运行。为了看一个简约的示例请点击<a href="java_simple.html">这里</a>。<a href="java_control.html">另一个示例</a>显示了如何替代该Java小程序周边的控制按钮。</p>
+
+      <h3>源代码片段</h3>
+      <p><pre>&lt;applet code="com.charliemouse.cambozola.Viewer" archive="cambozola.jar" width="512" height="384"&gt;
+&lt;param name="url" value="./?action=stream"/&gt;
+&lt;/applet&gt;</pre></p>
+
+      <applet code="com.charliemouse.cambozola.Viewer" archive="cambozola.jar" width="512" height="384">
+        <param name="url" value="./?action=stream"/>
+        <param name="watermarks" value="favicon.png|left,top"/>
+      </applet>
+
+      <h3>关于该Java小程序</h3>
+      <p>这个Java小程序叫做 <a href="http://www.charliemouse.com/code/cambozola/"><i>cambozola</i></a>.
+      下面是它的使用许可证：<br />
+      <iframe src="LICENSE.txt" name="LICENSE" width="512" height="320" scrolling="yes" >
+        <p><a href="LICENSE.txt">license</a></p>
+      </iframe>
+      </p>
+
+      <p>&copy; 关于 <a href="https://sourceforge.net/projects/mjpg-streamer/" target="_blank">MJPG-streamer项目</a> | Driven by <a href="https://www.mspace.tech" target="_blank">Walker Meng</a></p>
+    </div>
+  </body>
+</html>
+

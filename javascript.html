@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-cn" lang="zh-cn">
+  <head>
+    <title>MJPG-streamer</title>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="style.css" type="text/css" />
+    <link rel="shortcut icon" href="favicon.ico" />
+    <link rel="bookmark" href="favicon.ico" type="image/x-icon"　/>
+    <!--[if IE 6]>
+    <link rel="stylesheet" href="fix.css" type="text/css" />
+    <![endif]-->
+    <script type="text/javascript">
+
+      /* Copyright (C) 2007 Richard Atterer, richard©atterer.net
+       * This program is free software; you can redistribute it and/or modify it
+       * under the terms of the GNU General Public License, version 2. See the file
+       * COPYING for details.
+       */
+
+      var imageNr = 0; // Serial number of current image
+      var finished = new Array(); // References to img objects which have finished downloading
+      var paused = false;
+      var previous_time = new Date();
+      var fNi = 0, msAvg = 0, fpsAvg = 0, fcnt = 0, fN = 80, msa = [], wsize = 4;
+
+      function createImageLayer() {
+        var img = new Image();
+        img.style.position = "absolute";
+        img.style.zIndex = -1;
+        img.onload = imageOnload;
+        img.onclick = imageOnclick;
+        img.width = 640;
+        img.height = 360;
+        img.src = "./?action=snapshot&n=" + (++imageNr);
+        var webcam = document.getElementById("webcam");
+		window.info = document.getElementById('info').firstChild;
+		window.ravgFps = document.getElementById('ravgfps').firstChild;
+		window.ravgMs = document.getElementById('ravgms').firstChild;
+		webcam.insertBefore(img, webcam.firstChild);
+		document.getElementById('fN').firstChild.nodeValue = fN;
+      }
+	
+
+	function runningAvgs (delta) {
+		// delta is the measured frame period
+		var len;
+		if (fcnt < fN) {
+
+			fcnt++;
+			// we need to populate the sample array
+			msa.push(delta);
+			// calculate average period so far
+			msAvg += (delta - msAvg) / fcnt;
+			
+		} else {
+			/*
+				running average (fN samples) according to the formula:
+				rAvg = rAvg - value_fN_samples_back / fN + newest_value / fN
+			*/
+			msAvg += (delta - msa[0])/fN;
+			// drop oldest ms value, msa[0]
+			msa = msa.slice(1);
+			// append newest value, delta
+			msa.push(delta);
+		}
+		// calculate average fps
+		fpsAvg = 1000 / msAvg;
+		/*
+			once every fN frames, check if we need to adjust the averaging window
+			since faster rates seem to need more samples to reach a stable(er) readout
+		*/
+		if (++fNi == fN) {
+
+			fNi = 0;
+			// new window size
+			fN = parseInt(fpsAvg * wsize);
+			len = fcnt - fN;
+			// if our sample array, msa, has extra samples, then trim it to the new size
+			if (len > 0) {
+
+				// adjust averaging window (nr of samples)
+				msa = msa.splice(len);
+				// avoid populating the sample array again
+				fcnt = fN;
+			}
+		}
+	}
+
+      // Two layers are always present (except at the very beginning), to avoid flicker
+      function imageOnload() {
+        this.style.zIndex = imageNr; // Image finished, bring to front!
+        while (1 < finished.length) {
+          var del = finished.shift(); // Delete old image(s) from document
+          del.parentNode.removeChild(del);
+        }
+        finished.push(this);
+        current_time = new Date();
+        delta = current_time.getTime() - previous_time.getTime();
+        fps   = (1000.0 / delta).toFixed(1);
+		runningAvgs(delta);
+        info.nodeValue = delta + " ms (" + fps + " fps)";
+		ravgFps.nodeValue = fpsAvg.toFixed(1);
+		ravgMs.nodeValue = msAvg.toFixed(0);
+		previous_time = current_time;
+        if (!paused) createImageLayer();
+      }
+
+      function imageOnclick() { // Clicking on the image will pause the stream
+        paused = !paused;
+        if (!paused) createImageLayer();
+      }
+
+    </script>
+  </head>
+
+  <body onload="createImageLayer();">
+    <div id="sidebar">
+      <h1>UVC摄像头在线监控</h1>
+      <h2>基于MJPG-Streamer的视频串流</h2>
+
+      <div id="menu">
+        <a href="index.html">主页</a>
+        <a href="static.html">静态图片</a>
+        <a href="stream.html">视频串流</a>
+        <a href="java.html">Java示例</a>
+        <a class="active" href="javascript.html">Javascript</a>
+        <a href="videolan.html">外部串流</a>
+        <a target="_blank" onClick="window.open(this.href, '_blank'); return false;" href="control.htm">视频控制</a>
+      </div>
+
+      <h3>版本信息：</h3>
+      <p>v1.1 (2019年05月29日)</p>
+
+      <h3>Runtime info:</h3>
+      <p><span id="info">-</span><br/>
+      Avg<sub id="fN">-</sub> : <span  id="ravgms">-</span> ms (<span  id="ravgfps">-</span> fps)
+      </p>
+      </div>
+
+    <div id="content">
+      <h1>Javascript</h1>
+      <h2>使用Javascript显示视频串流</h2>
+
+      <h3>小提示</h3>
+        <p>该页面显示了使用Javascript显示的串流。它可以在大多数浏览器上工作。为了看一个简约的示例请点击<a href="javascript_simple.html">这里</a>。</p>
+
+        <div id="webcam" style="width:640px;height:360px"><noscript><img src="./?action=snapshot" width="640px" height="360px" style="float: none;" /></noscript></div>
+
+      <br /><br />
+      <p>&copy; 关于 <a href="https://sourceforge.net/projects/mjpg-streamer/" target="_blank">MJPG-streamer项目</a> | Driven by <a href="https://www.mspace.tech" target="_blank">Walker Meng</a></p>
+    </div>
+  </body>
+</html>
+
+
