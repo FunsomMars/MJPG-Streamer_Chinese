@@ -6,5 +6,6 @@
 .idea/
 .git/
 .DS_Store
+favicon.ico
 out
 gen
